@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  email     String    @unique
+  name      String?
+  active    Boolean   @default(false)
+  role      Role      @default(Author)
+  products  Product[]
+  username  String?   @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model User {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  email       String       @unique
+  firstName   String?
+  lastName    Boolean?     @default(false)
+  gender      Gender?
+  dateOfBirth DateTime?
+  billingInfo BillingInfo?
+  verified    Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Product {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  description  String
+  price        Float
+  newPrice     Float?
+  isDiscounted Boolean       @default(false)
+  discount     Float?
+  image        String
+  quantity     Int           @default(0)
+  createdById  String        @db.ObjectId
+  createBy     Admin         @relation(fields: [createdById], references: [id])
+  brandId      String        @db.ObjectId
+  brand        Brand         @relation(fields: [brandId], references: [id])
+  categoryId   String        @db.ObjectId
+  category     Category      @relation(fields: [categoryId], references: [id])
+  colourId     String        @db.ObjectId
+  colour       ProductColour @relation(fields: [colourId], references: [id])
+  gender       Gender?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model ProductColour {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  colour    String
+  hexCode   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+}
+
+model Brand {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+}
+
+model Category {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+}
+
+model Promotion {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  discount    Float
+  code        String   @unique
+  type        String
+  startDate   DateTime @map("start_date")
+  isActive    Boolean  @default(false)
+  endDate     DateTime @map("end_date")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum Role {
+  Author     @map("author")
+  Editor     @map("editor")
+  SuperAdmin @map("super-admin")
+}
+
+enum Gender {
+  Male   @map("male")
+  Female @map("female")
+}
+
+type BillingInfo {
+  address    String
+  city       String
+  state      String
+  postalCode String
+  country    String
+  cardNumber String
+  expMonth   Int
+  expYear    Int
+  cvv        String
+}
