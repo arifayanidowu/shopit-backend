@@ -26,7 +26,7 @@ export class MagicLoginStrategy extends PassportStrategy(Strategy) {
       sendMagicLink: async (destination, href) => {
         const msg = {
           to: destination,
-          from: 'ShopIt Magic Link: <arifayanidowu2@gmail.com>',
+          from: 'ShopIt Online Store: <arifayanidowu2@gmail.com>',
           subject: 'Magic Link',
           text: 'Magic Link',
           html: `<a href="${href}">Click here to login</a>`,

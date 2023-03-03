@@ -3,15 +3,22 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { AppAbility } from 'src/casl/casl-ability.factory';
+import { CheckPolicies } from 'src/casl/decorator/check-policies.decorator';
+import { Action } from 'src/casl/enum/action.enum';
+import { PoliciesGuard } from 'src/casl/guard/policies.guard';
 import { AuthService } from './auth.service';
 import { AccountDto } from './dto/account.dto';
 import { MagicLoginStrategy } from './strategy/magic-login.strategy';
+import { AdminClass } from './../casl/classes/schema.classes';
+import { JwtAuthGuard } from './guards/JwtAuthGuard';
 
 @Controller('auth')
 export class AuthController {
@@ -32,13 +39,23 @@ export class AuthController {
 
   @UseGuards(AuthGuard('magiclogin'))
   @Get('login/callback')
-  async loginCallback(@Req() req) {
+  async loginCallback(@Req() req, @Query() query: { token: string }) {
+    console.log(query);
     return this.authService.login(req.user);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Req() req) {
     return req.user;
+  }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Get('all/users')
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Manage, AdminClass),
+  )
+  getAllUsers() {
+    return this.authService.getAllUsers();
   }
 }

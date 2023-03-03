@@ -7,11 +7,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { MagicLoginStrategy } from './strategy/magic-login.strategy';
 import { AdminModule } from 'src/admin/admin.module';
+import { CaslModule } from 'src/casl/casl.module';
 
 @Module({
   imports: [
     AdminModule,
     PassportModule,
+    CaslModule,
     JwtModule.registerAsync({
       useFactory: async (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET'),

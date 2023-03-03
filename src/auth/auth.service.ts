@@ -30,4 +30,8 @@ export class AuthService {
       user,
     };
   }
+
+  async getAllUsers(): Promise<Admin[]> {
+    return await this.adminService.findAll({});
+  }
 }

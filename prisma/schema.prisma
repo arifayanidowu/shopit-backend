@@ -23,6 +23,7 @@ model Admin {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   promotions    Promotion[]
+  avatar        String?
 }
 
 model User {
@@ -36,6 +37,7 @@ model User {
   verified    Boolean      @default(false)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  avatar      String?
 }
 
 model Product {
@@ -59,6 +61,9 @@ model Product {
   gender       Gender?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  isPublished  Boolean       @default(false)
+  size         Size          @relation(fields: [sizeId], references: [id])
+  sizeId       String[]      @db.ObjectId
 }
 
 model ProductColour {
@@ -73,6 +78,15 @@ model ProductColour {
 model Brand {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+}
+
+model Size {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  text      String
+  longText  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   products  Product[]
