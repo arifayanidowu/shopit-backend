@@ -11,15 +11,18 @@ datasource db {
 }
 
 model Admin {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  email     String    @unique
-  name      String?
-  active    Boolean   @default(false)
-  role      Role      @default(Author)
-  products  Product[]
-  username  String?   @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  email         String      @unique
+  name          String?
+  isAdmin       Boolean     @default(true)
+  active        Boolean     @default(false)
+  validateToken String?     @default(cuid())
+  role          Role        @default(Author)
+  products      Product[]
+  username      String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  promotions    Promotion[]
 }
 
 model User {
@@ -95,6 +98,8 @@ model Promotion {
   endDate     DateTime @map("end_date")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  createdById String   @db.ObjectId
+  createdBy   Admin    @relation(fields: [createdById], references: [id])
 }
 
 enum Role {
