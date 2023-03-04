@@ -41,55 +41,36 @@ model User {
 }
 
 model Product {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
   name         String
   description  String
   price        Float
   newPrice     Float?
-  isDiscounted Boolean       @default(false)
+  isDiscounted Boolean   @default(false)
   discount     Float?
   image        String
-  quantity     Int           @default(0)
-  createdById  String        @db.ObjectId
-  createBy     Admin         @relation(fields: [createdById], references: [id])
-  brandId      String        @db.ObjectId
-  brand        Brand         @relation(fields: [brandId], references: [id])
-  categoryId   String        @db.ObjectId
-  category     Category      @relation(fields: [categoryId], references: [id])
-  colourId     String        @db.ObjectId
-  colour       ProductColour @relation(fields: [colourId], references: [id])
+  quantity     Int       @default(0)
+  createdById  String?   @db.ObjectId
+  createBy     Admin?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  brandId      String?   @db.ObjectId
+  brand        Brand?    @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  categoryId   String?   @db.ObjectId
+  category     Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   gender       Gender?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  isPublished  Boolean       @default(false)
-  size         Size          @relation(fields: [sizeId], references: [id])
-  sizeId       String[]      @db.ObjectId
-}
-
-model ProductColour {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  colour    String
-  hexCode   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  products  Product[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  isPublished  Boolean   @default(false)
+  sizes        String[]  @default(["S", "M", "L", "XL", "XXL"])
+  status       Status    @default(draft)
 }
 
 model Brand {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
+  name      String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   products  Product[]
-}
-
-model Size {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  text      String
-  longText  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  products  Product[]
+  logo      String?
 }
 
 model Category {
@@ -113,13 +94,18 @@ model Promotion {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   createdById String   @db.ObjectId
-  createdBy   Admin    @relation(fields: [createdById], references: [id])
+  createdBy   Admin    @relation(fields: [createdById], references: [id], onDelete: Cascade)
 }
 
 enum Role {
   Author     @map("author")
   Editor     @map("editor")
   SuperAdmin @map("super-admin")
+}
+
+enum Status {
+  draft     @map("draft")
+  published @map("published")
 }
 
 enum Gender {

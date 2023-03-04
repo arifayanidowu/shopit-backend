@@ -8,16 +8,15 @@ import {
   PureAbility,
 } from '@casl/ability';
 import { Action } from '../casl/enum/action.enum';
-import { Admin, Promotion, ProductColour, Brand } from '@prisma/client';
-import { AdminClass, ProductClass } from './classes/schema.classes';
+import { Admin, Promotion } from '@prisma/client';
+import { AdminClass, ProductClass, BrandClass } from './classes/schema.classes';
 
 type Subjects =
   | InferSubjects<
       | Admin
       | Promotion
       | typeof ProductClass
-      | ProductColour
-      | Brand
+      | typeof BrandClass
       | typeof AdminClass
     >
   | 'all';

@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Post,
-  Query,
   Req,
   Res,
   UseGuards,
@@ -18,7 +17,7 @@ import { AuthService } from './auth.service';
 import { AccountDto } from './dto/account.dto';
 import { MagicLoginStrategy } from './strategy/magic-login.strategy';
 import { AdminClass } from './../casl/classes/schema.classes';
-import { JwtAuthGuard } from './guards/JwtAuthGuard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -39,8 +38,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('magiclogin'))
   @Get('login/callback')
-  async loginCallback(@Req() req, @Query() query: { token: string }) {
-    console.log(query);
+  async loginCallback(@Req() req) {
     return this.authService.login(req.user);
   }
 

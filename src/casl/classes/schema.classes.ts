@@ -1,4 +1,4 @@
-import { Admin, Role, Product, Gender } from '@prisma/client';
+import { Admin, Role, Product, Gender, Status, Brand } from '@prisma/client';
 
 export class AdminClass implements Admin {
   id: string;
@@ -27,10 +27,18 @@ export class ProductClass implements Product {
   createdById: string;
   brandId: string;
   categoryId: string;
-  colourId: string;
   gender: Gender | null;
   createdAt: Date;
   updatedAt: Date;
   isPublished: boolean;
-  sizeId: string[];
+  sizes: string[];
+  status: Status;
+}
+
+export class BrandClass implements Brand {
+  id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  logo: string | null;
 }

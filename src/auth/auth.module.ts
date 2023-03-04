@@ -24,6 +24,6 @@ import { CaslModule } from 'src/casl/casl.module';
   ],
   providers: [AuthService, JwtStrategy, MagicLoginStrategy],
   controllers: [AuthController],
-  exports: [AuthService, MagicLoginStrategy],
+  exports: [AuthService, MagicLoginStrategy, CaslModule, PassportModule],
 })
 export class AuthModule {}
