@@ -2,10 +2,13 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Delete,
   FileTypeValidator,
   Get,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
+  Patch,
   Post,
   UploadedFile,
   UseGuards,
@@ -19,6 +22,8 @@ import { CheckPolicies } from 'src/casl/decorator/check-policies.decorator';
 import { CreateBrandHandler } from './handlers/create-brand.handler';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { BrandEntity } from './entity/brand.entity';
+import { uploadImage } from 'src/utils/cloudinary.utils';
+import { Brand } from '@prisma/client';
 
 @Controller('brand')
 export class BrandController {
@@ -51,6 +56,68 @@ export class BrandController {
       ...body,
       name: body.name.trim().toLowerCase(),
     });
-    return this.brandService.createBrand(data, file);
+
+    data.logo = await uploadImage(file);
+
+    const result = await this.brandService.createBrand(data);
+    return {
+      statusCode: 201,
+      result,
+    };
+  }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Patch(':id')
+  @UseInterceptors(FileInterceptor('file'), ClassSerializerInterceptor)
+  @CheckPolicies(new CreateBrandHandler())
+  async update(
+    @Param('id') id: string,
+    @Body() body: BrandEntity,
+    file?: Express.Multer.File,
+  ) {
+    const data = new BrandEntity({
+      ...body,
+      name: body.name.trim().toLowerCase(),
+    });
+    if (file) {
+      data.logo = await uploadImage(file);
+    }
+    const result = await this.brandService.updateBrand({
+      where: {
+        id,
+      },
+      data,
+    });
+    return {
+      statusCode: 200,
+      result,
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async getBrand(
+    @Param('id') id: string,
+  ): Promise<{ statusCode: number; result: Brand }> {
+    const result = await this.brandService.findOne({
+      id,
+    });
+    return {
+      statusCode: 200,
+      result,
+    };
+  }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Delete(':id')
+  @CheckPolicies(new CreateBrandHandler())
+  async deleteBrand(@Param('id') id: string) {
+    const result = await this.brandService.deleteBrand({
+      id,
+    });
+    return {
+      statusCode: 200,
+      result,
+    };
   }
 }

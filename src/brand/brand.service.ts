@@ -1,8 +1,6 @@
-import { Express } from 'express';
 import { Prisma, Brand } from '@prisma/client';
 import { Injectable, HttpException } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { uploadImage } from 'src/utils/cloudinary.utils';
 
 @Injectable()
 export class BrandService {
@@ -33,18 +31,9 @@ export class BrandService {
     });
   }
 
-  async createBrand(
-    data: Prisma.BrandCreateInput,
-    file: Express.Multer.File,
-  ): Promise<Brand> {
+  async createBrand(data: Prisma.BrandCreateInput): Promise<Brand> {
     try {
-      const newBrand = await this.prisma.brand.create({
-        data: {
-          ...data,
-          logo: await uploadImage(file),
-        },
-      });
-      return newBrand;
+      return await this.prisma.brand.create({ data });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
