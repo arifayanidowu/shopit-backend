@@ -62,7 +62,7 @@ export class BrandController {
     const result = await this.brandService.createBrand(data);
     return {
       statusCode: 201,
-      result,
+      data: result,
     };
   }
 
@@ -73,6 +73,15 @@ export class BrandController {
   async update(
     @Param('id') id: string,
     @Body() body: BrandEntity,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|svg|webp)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
     file?: Express.Multer.File,
   ) {
     const data = new BrandEntity({
@@ -90,7 +99,7 @@ export class BrandController {
     });
     return {
       statusCode: 200,
-      result,
+      data: result,
     };
   }
 
@@ -98,13 +107,13 @@ export class BrandController {
   @Get(':id')
   async getBrand(
     @Param('id') id: string,
-  ): Promise<{ statusCode: number; result: Brand }> {
+  ): Promise<{ statusCode: number; data: Brand }> {
     const result = await this.brandService.findOne({
       id,
     });
     return {
       statusCode: 200,
-      result,
+      data: result,
     };
   }
 
@@ -117,7 +126,7 @@ export class BrandController {
     });
     return {
       statusCode: 200,
-      result,
+      data: result,
     };
   }
 }

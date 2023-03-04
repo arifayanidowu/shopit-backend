@@ -9,7 +9,12 @@ import {
 } from '@casl/ability';
 import { Action } from '../casl/enum/action.enum';
 import { Admin, Promotion } from '@prisma/client';
-import { AdminClass, ProductClass, BrandClass } from './classes/schema.classes';
+import {
+  AdminClass,
+  ProductClass,
+  BrandClass,
+  CategoryClass,
+} from './classes/schema.classes';
 
 type Subjects =
   | InferSubjects<
@@ -18,6 +23,7 @@ type Subjects =
       | typeof ProductClass
       | typeof BrandClass
       | typeof AdminClass
+      | typeof CategoryClass
     >
   | 'all';
 export type AppAbility = PureAbility<[Action, Subjects], MatchConditions>;

@@ -6,6 +6,8 @@ import { AdminModule } from './admin/admin.module';
 import { ConfigModule } from '@nestjs/config';
 import { CaslModule } from './casl/casl.module';
 import { BrandModule } from './brand/brand.module';
+import { CategoryModule } from './category/category.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { BrandModule } from './brand/brand.module';
     }),
     CaslModule,
     BrandModule,
+    CategoryModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],
