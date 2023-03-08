@@ -41,6 +41,7 @@ export class ProductClass implements Product {
   isPublished: boolean;
   sizes: string[];
   status: Status;
+  orderId: string | null;
 }
 
 export class BrandClass implements Brand {

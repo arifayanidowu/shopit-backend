@@ -42,7 +42,7 @@ export class CategoryService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new HttpException(
-            `This is a unique constraint violation, Category name (${data.name}) already exists`,
+            `This is a unique constraint violation, Category with (${error.meta.target}) already exists`,
             422,
           );
         }
@@ -65,7 +65,7 @@ export class CategoryService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new HttpException(
-            `This is a unique constraint violation, Category name (${data.name}) already exists`,
+            `This is a unique constraint violation, Category with (${error.meta.target}) already exists`,
             422,
           );
         } else if (error.code === 'P2025') {
@@ -92,7 +92,7 @@ export class CategoryService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new HttpException(
-            `This is a unique constraint violation, Category name (${update.name}) already exists`,
+            `This is a unique constraint violation, Category with (${error.meta.target}) already exists`,
             422,
           );
         }

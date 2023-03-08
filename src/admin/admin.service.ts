@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { Admin, Prisma } from '@prisma/client';
-
 @Injectable()
 export class AdminService {
   constructor(private prisma: PrismaService) {}
@@ -32,9 +31,29 @@ export class AdminService {
   }
 
   async createAdmin(data: Prisma.AdminCreateInput): Promise<Admin> {
-    return this.prisma.admin.create({
-      data,
-    });
+    try {
+      const admin = await this.prisma.admin.findFirst({
+        where: { role: 'SuperAdmin' },
+      });
+      if (admin.role === data.role)
+        throw new HttpException(
+          `Admin with role (${admin.role}) already exists`,
+          422,
+        );
+      return await this.prisma.admin.create({
+        data,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new HttpException(
+            `This is a unique constraint violation, Admin with (${error.meta.target}) already exists`,
+            422,
+          );
+        }
+      }
+      throw error;
+    }
   }
 
   async updateAdmin(params: {

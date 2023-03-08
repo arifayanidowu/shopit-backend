@@ -42,7 +42,7 @@ export class ProductService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new HttpException(
-            `This is a unique constraint violation, Product name (${data.name}) already exists`,
+            `This is a unique constraint violation, Product with (${error.meta.target}) already exists`,
             422,
           );
         }
@@ -65,7 +65,7 @@ export class ProductService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new HttpException(
-            `This is a unique constraint violation, Product name (${data.name}) already exists`,
+            `This is a unique constraint violation, Product with (${error.meta.target}) already exists`,
             422,
           );
         } else if (error.code === 'P2025') {
@@ -92,7 +92,7 @@ export class ProductService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new HttpException(
-            `This is a unique constraint violation, Product name (${update.name}) already exists`,
+            `This is a unique constraint violation, Product with (${error.meta.target}) already exists`,
             422,
           );
         }
@@ -109,5 +109,25 @@ export class ProductService {
     } catch (error) {
       throw new HttpException(error, 500);
     }
+  }
+
+  async batchProducts(params: {
+    where: Prisma.ProductWhereInput;
+    take?: number;
+    skip?: number;
+  }) {
+    const { where, take, skip } = params;
+    const [products, productCount] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
+        where,
+        take,
+        skip,
+      }),
+      this.prisma.product.count({ where }),
+    ]);
+    return {
+      products,
+      productCount,
+    };
   }
 }

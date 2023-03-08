@@ -135,4 +135,15 @@ export class ProductController {
       data: result,
     };
   }
+
+  @Get('batch/:id')
+  async getBatchProducts(@Param('id') batchId: string) {
+    const result = await this.productService.batchProducts({
+      where: { id: batchId },
+    });
+    return {
+      statusCode: 200,
+      data: result,
+    };
+  }
 }

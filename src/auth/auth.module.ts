@@ -17,7 +17,7 @@ import { CaslModule } from 'src/casl/casl.module';
     JwtModule.registerAsync({
       useFactory: async (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '1h' },
+        signOptions: { expiresIn: '24h' },
       }),
       inject: [ConfigService],
     }),

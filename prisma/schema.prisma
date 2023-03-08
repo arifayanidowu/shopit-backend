@@ -26,7 +26,7 @@ model Admin {
   avatar        String?
 }
 
-model User {
+model Customer {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
   email       String       @unique
   firstName   String?
@@ -38,6 +38,7 @@ model User {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   avatar      String?
+  orders      Order[]
 }
 
 model Product {
@@ -62,6 +63,28 @@ model Product {
   isPublished  Boolean   @default(false)
   sizes        String[]  @default(["S", "M", "L", "XL", "XXL"])
   status       Status    @default(draft)
+  order        Order?    @relation(fields: [orderId], references: [id])
+  orderId      String?   @db.ObjectId
+}
+
+model Order {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  customerId  String    @db.ObjectId
+  customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  products    Product[]
+  total       Float
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  isCompleted Boolean   @default(false)
+  invoices    Invoice[]
+}
+
+model Invoice {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @db.ObjectId
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Brand {

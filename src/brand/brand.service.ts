@@ -38,7 +38,7 @@ export class BrandService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new HttpException(
-            `This is a unique constraint violation, Brand name (${data.name}) already exists`,
+            `This is a unique constraint violation, Brand with (${error.meta.target}) already exists`,
             422,
           );
         }

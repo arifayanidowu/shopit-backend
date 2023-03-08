@@ -31,16 +31,16 @@ export class MagicLoginStrategy extends PassportStrategy(Strategy) {
           text: 'Magic Link',
           html: `<a href="${href}">Click here to login</a>`,
         };
-        // await sendGrid.send({
-        //   templateId: process.env.SENDGRID_DYNAMIC_TEMPLATE_ID,
-        //   dynamicTemplateData: {
-        //     subject: 'Magic Link',
-        //     name: 'ShopIt',
-        //     link: href,
-        //     email: destination,
-        //   },
-        //   ...msg,
-        // });
+        await sendGrid.send({
+          templateId: process.env.SENDGRID_DYNAMIC_TEMPLATE_ID,
+          dynamicTemplateData: {
+            subject: 'Magic Link',
+            name: 'ShopIt',
+            link: href,
+            email: destination,
+          },
+          ...msg,
+        });
         this.logger.debug(
           `Sending magic link email to ${destination} with link url ${href}`,
         );

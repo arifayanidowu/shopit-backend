@@ -34,6 +34,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cloudinary": "^1.35.0",
+    "jwt-decode": "^3.1.2",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-magic-login": "^1.2.2",
