@@ -56,4 +56,11 @@ export class AuthController {
   getAllUsers() {
     return this.authService.getAllUsers();
   }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Get('admin/counts')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, AdminClass))
+  getAdminCounts() {
+    return this.authService.getAdminsCount();
+  }
 }

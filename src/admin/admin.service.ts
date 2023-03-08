@@ -85,4 +85,28 @@ export class AdminService {
       where,
     });
   }
+
+  async getAdminsRolesCount(): Promise<{
+    authors: number;
+    editors: number;
+    superAdmins: number;
+  }> {
+    const [authors, editors, superAdmins] = await this.prisma.$transaction([
+      this.prisma.admin.count({
+        where: { role: 'Author' },
+      }),
+      this.prisma.admin.count({
+        where: { role: 'Editor' },
+      }),
+      this.prisma.admin.count({
+        where: { role: 'SuperAdmin' },
+      }),
+    ]);
+
+    return {
+      authors,
+      editors,
+      superAdmins,
+    };
+  }
 }

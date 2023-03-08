@@ -34,4 +34,12 @@ export class AuthService {
   async getAllUsers(): Promise<Admin[]> {
     return await this.adminService.findAll({});
   }
+
+  async getAdminsCount(): Promise<{
+    authors: number;
+    editors: number;
+    superAdmins: number;
+  }> {
+    return await this.adminService.getAdminsRolesCount();
+  }
 }
