@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
+  Patch,
   Post,
   Req,
   Res,
@@ -18,6 +21,7 @@ import { AccountDto } from './dto/account.dto';
 import { MagicLoginStrategy } from './strategy/magic-login.strategy';
 import { AdminClass } from './../casl/classes/schema.classes';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { Admin } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -49,7 +53,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @Get('all/users')
+  @Get('all/admins')
   @CheckPolicies((ability: AppAbility) =>
     ability.can(Action.Manage, AdminClass),
   )
@@ -62,5 +66,24 @@ export class AuthController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, AdminClass))
   getAdminCounts() {
     return this.authService.getAdminsCount();
+  }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Patch('update/admin')
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Update, AdminClass),
+  )
+  updateAdmin(@Body() body: Partial<Admin>) {
+    const { id, ...update } = body;
+    return this.authService.updateAdmin(update);
+  }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Delete('delete/admin/:id')
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Manage, AdminClass),
+  )
+  deleteAdmin(@Param('id') id: string) {
+    return this.authService.deleteAdmin(id);
   }
 }

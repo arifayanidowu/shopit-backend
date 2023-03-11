@@ -31,6 +31,13 @@ export class AuthService {
     };
   }
 
+  async updateAdmin(data: Partial<Admin>) {
+    return await this.adminService.updateAdmin({
+      where: { email: data.email },
+      data,
+    });
+  }
+
   async getAllUsers(): Promise<Admin[]> {
     return await this.adminService.findAll({});
   }
@@ -41,5 +48,9 @@ export class AuthService {
     superAdmins: number;
   }> {
     return await this.adminService.getAdminsRolesCount();
+  }
+
+  async deleteAdmin(id: string): Promise<Admin> {
+    return await this.adminService.deleteAdmin({ id });
   }
 }

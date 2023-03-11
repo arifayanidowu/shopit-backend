@@ -8,9 +8,21 @@ export class AdminService {
   async findOne(
     adminWhereUniqueInput: Prisma.AdminWhereUniqueInput,
   ): Promise<Admin | null> {
-    return this.prisma.admin.findUnique({
-      where: adminWhereUniqueInput,
-    });
+    try {
+      return await this.prisma.admin.findUnique({
+        where: adminWhereUniqueInput,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2010') {
+          throw new HttpException(
+            `Raw query failed. Code: ${error.code}. Message: ${error.message}`,
+            422,
+          );
+        }
+      }
+      throw error;
+    }
   }
 
   async findAll(params: {
