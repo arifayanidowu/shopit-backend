@@ -1,17 +1,25 @@
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   Patch,
   Post,
   Req,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Request, Express } from 'express';
 import { AppAbility } from 'src/casl/casl-ability.factory';
 import { CheckPolicies } from 'src/casl/decorator/check-policies.decorator';
 import { Action } from 'src/casl/enum/action.enum';
@@ -22,6 +30,7 @@ import { MagicLoginStrategy } from './strategy/magic-login.strategy';
 import { AdminClass } from './../casl/classes/schema.classes';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Admin } from '@prisma/client';
+import { uploadImage } from 'src/utils/cloudinary.utils';
 
 @Controller('auth')
 export class AuthController {
@@ -54,9 +63,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Get('all/admins')
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Manage, AdminClass),
-  )
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, AdminClass))
   getAllUsers() {
     return this.authService.getAllUsers();
   }
@@ -74,8 +81,36 @@ export class AuthController {
     ability.can(Action.Update, AdminClass),
   )
   updateAdmin(@Body() body: Partial<Admin>) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...update } = body;
     return this.authService.updateAdmin(update);
+  }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Patch('update/admin/profile')
+  @UseInterceptors(FileInterceptor('avatar'), ClassSerializerInterceptor)
+  async updateProfile(
+    @Req() req,
+    @Body() body: Partial<Admin>,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|svg|webp)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    file?: Express.Multer.File,
+  ) {
+    const data = { ...body };
+    if (file) {
+      data.avatar = await uploadImage(file);
+    }
+
+    return await this.authService.updateProfile(req.user.id, {
+      ...data,
+    });
   }
 
   @UseGuards(JwtAuthGuard, PoliciesGuard)
@@ -85,5 +120,14 @@ export class AuthController {
   )
   deleteAdmin(@Param('id') id: string) {
     return this.authService.deleteAdmin(id);
+  }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Delete('delete/admins')
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Delete, AdminClass),
+  )
+  deleteAdmins(@Req() req: Request) {
+    return this.authService.deleteManyAdmins(req.body.ids);
   }
 }

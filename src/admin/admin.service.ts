@@ -47,11 +47,12 @@ export class AdminService {
       const admin = await this.prisma.admin.findFirst({
         where: { role: 'SuperAdmin' },
       });
-      if (admin.role === data.role)
+      if (admin && admin.role === data.role) {
         throw new HttpException(
           `Admin with role (${admin.role}) already exists`,
           422,
         );
+      }
       return await this.prisma.admin.create({
         data,
       });
@@ -72,11 +73,40 @@ export class AdminService {
     where: Prisma.AdminWhereUniqueInput;
     data: Prisma.AdminUpdateInput;
   }): Promise<Admin> {
-    const { where, data } = params;
-    return this.prisma.admin.update({
-      data,
-      where,
-    });
+    try {
+      const { where, data } = params;
+
+      const admin = await this.prisma.admin.findFirst({
+        where: { role: 'SuperAdmin' },
+      });
+      if (admin && admin.role === data.role)
+        throw new HttpException(
+          `Admin with role (${admin.role}) already exists`,
+          422,
+        );
+      return this.prisma.admin.update({
+        data,
+        where,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateProfile(params: {
+    where: Prisma.AdminWhereUniqueInput;
+    data: Prisma.AdminUpdateInput;
+  }): Promise<Admin> {
+    try {
+      const { where, data } = params;
+
+      return this.prisma.admin.update({
+        data,
+        where,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   async upsertAdmin(params: {
@@ -96,6 +126,12 @@ export class AdminService {
     return this.prisma.admin.delete({
       where,
     });
+  }
+
+  async deleteManyAdmins(
+    where?: Prisma.AdminWhereInput,
+  ): Promise<Prisma.BatchPayload> {
+    return this.prisma.admin.deleteMany({ where });
   }
 
   async getAdminsRolesCount(): Promise<{

@@ -34,7 +34,20 @@ export class AuthService {
   async updateAdmin(data: Partial<Admin>) {
     return await this.adminService.updateAdmin({
       where: { email: data.email },
-      data,
+      data: {
+        ...data,
+        updatedAt: new Date(),
+      },
+    });
+  }
+
+  async updateProfile(id: string, data: Partial<Admin>) {
+    return await this.adminService.updateProfile({
+      where: { id },
+      data: {
+        ...data,
+        updatedAt: new Date(),
+      },
     });
   }
 
@@ -52,5 +65,13 @@ export class AuthService {
 
   async deleteAdmin(id: string): Promise<Admin> {
     return await this.adminService.deleteAdmin({ id });
+  }
+
+  async deleteManyAdmins(ids: string[]) {
+    return this.adminService.deleteManyAdmins({
+      id: {
+        in: ids,
+      },
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, HttpException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import Strategy from 'passport-magic-login';
@@ -31,16 +31,20 @@ export class MagicLoginStrategy extends PassportStrategy(Strategy) {
           text: 'Magic Link',
           html: `<a href="${href}">Click here to login</a>`,
         };
-        await sendGrid.send({
-          templateId: process.env.SENDGRID_DYNAMIC_TEMPLATE_ID,
-          dynamicTemplateData: {
-            subject: 'Magic Link',
-            name: 'ShopIt',
-            link: href,
-            email: destination,
-          },
-          ...msg,
-        });
+        await sendGrid
+          .send({
+            templateId: process.env.SENDGRID_DYNAMIC_TEMPLATE_ID,
+            dynamicTemplateData: {
+              subject: 'Magic Link',
+              name: 'ShopIt',
+              link: href,
+              email: destination,
+            },
+            ...msg,
+          })
+          .catch((error) => {
+            throw new HttpException(error, 500);
+          });
         this.logger.debug(
           `Sending magic link email to ${destination} with link url ${href}`,
         );
