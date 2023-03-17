@@ -4,11 +4,10 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Delete,
-  FileTypeValidator,
   Get,
-  MaxFileSizeValidator,
+  HttpStatus,
   Param,
-  ParseFilePipe,
+  ParseFilePipeBuilder,
   Patch,
   Post,
   Req,
@@ -93,13 +92,16 @@ export class AuthController {
     @Req() req,
     @Body() body: Partial<Admin>,
     @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|svg|webp)' }),
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
-        ],
-        fileIsRequired: false,
-      }),
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /png|jpeg|jpg|svg|webp/gi,
+        })
+        .addMaxSizeValidator({
+          maxSize: 1024 * 1024 * 4,
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
     )
     file?: Express.Multer.File,
   ) {

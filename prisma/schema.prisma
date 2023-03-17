@@ -24,6 +24,7 @@ model Admin {
   updatedAt     DateTime    @updatedAt
   promotions    Promotion[]
   avatar        String?
+  callbackUrl   String?
 }
 
 model Customer {
@@ -62,9 +63,13 @@ model Product {
   updatedAt    DateTime  @updatedAt
   isPublished  Boolean   @default(false)
   sizes        String[]  @default(["S", "M", "L", "XL", "XXL"])
+  size         String?
   status       Status    @default(draft)
   order        Order?    @relation(fields: [orderId], references: [id])
   orderId      String?   @db.ObjectId
+  sku          String?
+  color        String?
+  type         String?
 }
 
 model Order {
@@ -129,6 +134,7 @@ enum Role {
 enum Status {
   draft     @map("draft")
   published @map("published")
+  archived  @map("archived")
 }
 
 enum Gender {

@@ -14,9 +14,10 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException();
     }
+
     if (!user.active) {
       await this.adminService.updateAdmin({
-        where: { email },
+        where: { email: user.email },
         data: { active: true, validateToken: null },
       });
     }
@@ -52,7 +53,11 @@ export class AuthService {
   }
 
   async getAllUsers(): Promise<Admin[]> {
-    return await this.adminService.findAll({});
+    return await this.adminService.findAll({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
   async getAdminsCount(): Promise<{

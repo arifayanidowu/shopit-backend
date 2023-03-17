@@ -19,14 +19,16 @@ export class BrandService {
     take?: number;
     cursor?: Prisma.BrandWhereUniqueInput;
     where?: Prisma.BrandWhereInput;
+    include?: Prisma.BrandInclude;
     orderBy?: Prisma.BrandOrderByWithRelationInput;
   }): Promise<Brand[]> {
-    const { skip, take, cursor, where, orderBy } = params;
+    const { skip, take, cursor, where, include, orderBy } = params;
     return await this.prisma.brand.findMany({
       skip,
       take,
       cursor,
       where,
+      include,
       orderBy,
     });
   }

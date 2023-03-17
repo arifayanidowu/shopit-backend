@@ -8,6 +8,7 @@ import { CaslModule } from './casl/casl.module';
 import { BrandModule } from './brand/brand.module';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
+import { ClsModule } from 'nestjs-cls';
 
 @Module({
   imports: [
@@ -16,6 +17,13 @@ import { ProductModule } from './product/product.module';
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
+    }),
+    ClsModule.forRoot({
+      middleware: {
+        // automatically mount the
+        // ClsMiddleware for all routes
+        mount: true,
+      },
     }),
     CaslModule,
     BrandModule,

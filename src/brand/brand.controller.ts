@@ -5,9 +5,11 @@ import {
   Delete,
   FileTypeValidator,
   Get,
+  HttpStatus,
   MaxFileSizeValidator,
   Param,
   ParseFilePipe,
+  ParseFilePipeBuilder,
   Patch,
   Post,
   UploadedFile,
@@ -32,38 +34,43 @@ export class BrandController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async findAll() {
-    return this.brandService.findAll({});
+    return this.brandService.findAll({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        products: true,
+      },
+    });
   }
 
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Post('create')
-  @UseInterceptors(FileInterceptor('file'), ClassSerializerInterceptor)
+  @UseInterceptors(FileInterceptor('logo'), ClassSerializerInterceptor)
   @CheckPolicies(new CreateBrandHandler())
   async create(
     @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|svg|webp)' }),
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
-        ],
-        fileIsRequired: false,
-      }),
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /png|jpeg|jpg|svg|webp/gi,
+        })
+        .addMaxSizeValidator({
+          maxSize: 1024 * 1024 * 4,
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
     )
     file: Express.Multer.File,
     @Body() body: BrandEntity,
   ) {
     const data = new BrandEntity({
       ...body,
-      name: body.name.trim().toLowerCase(),
     });
 
     data.logo = await uploadImage(file);
 
-    const result = await this.brandService.createBrand(data);
-    return {
-      statusCode: 201,
-      data: result,
-    };
+    return await this.brandService.createBrand(data);
   }
 
   @UseGuards(JwtAuthGuard, PoliciesGuard)
@@ -86,21 +93,17 @@ export class BrandController {
   ) {
     const data = new BrandEntity({
       ...body,
-      name: body.name.trim().toLowerCase(),
     });
     if (file) {
       data.logo = await uploadImage(file);
     }
-    const result = await this.brandService.updateBrand({
+
+    return await this.brandService.updateBrand({
       where: {
         id,
       },
       data,
     });
-    return {
-      statusCode: 200,
-      data: result,
-    };
   }
 
   @UseGuards(JwtAuthGuard)

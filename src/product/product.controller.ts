@@ -23,6 +23,7 @@ import { PoliciesGuard } from 'src/casl/guard/policies.guard';
 import { CheckPolicies } from 'src/casl/decorator/check-policies.decorator';
 import { ProductHandler } from './handler/product.handler';
 import { Product } from '@prisma/client';
+import { generateSku } from 'src/utils/sku';
 import { uploadImage } from 'src/utils/cloudinary.utils';
 import { ProductEntity } from './entity/product.entity';
 
@@ -79,13 +80,10 @@ export class ProductController {
       image: await uploadImage(file),
       price: Number(body.price),
       quantity: Number(body.quantity),
+      sku: generateSku(body),
     });
 
-    const result = await this.productService.createProduct(data);
-    return {
-      statusCode: 201,
-      data: result,
-    };
+    return await this.productService.createProduct(data);
   }
 
   @Patch(':id')
@@ -115,35 +113,23 @@ export class ProductController {
     if (file) {
       data.image = await uploadImage(file);
     }
-    const result = await this.productService.updateProduct({
+    return await this.productService.updateProduct({
       where: { id },
       data,
     });
-    return {
-      statusCode: 200,
-      data: result,
-    };
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(new ProductHandler())
   async delete(@Param('id') id: string) {
-    const result = await this.productService.deleteProduct({ id });
-    return {
-      statusCode: 200,
-      data: result,
-    };
+    return await this.productService.deleteProduct({ id });
   }
 
   @Get('batch/:id')
   async getBatchProducts(@Param('id') batchId: string) {
-    const result = await this.productService.batchProducts({
+    return await this.productService.batchProducts({
       where: { id: batchId },
     });
-    return {
-      statusCode: 200,
-      data: result,
-    };
   }
 }

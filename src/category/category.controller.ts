@@ -23,25 +23,19 @@ export class CategoryController {
   @Get()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(new CategoryHandler())
-  async findAll(): Promise<{ statusCode: number; data: Category[] }> {
-    const result = await this.categoryService.findAll({});
-    return {
-      statusCode: 200,
-      data: result,
-    };
+  async findAll(): Promise<Category[]> {
+    return await this.categoryService.findAll({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(new CategoryHandler())
-  async findOne(
-    @Param('id') id: string,
-  ): Promise<{ statusCode: number; data: Category }> {
-    const result = await this.categoryService.findOne({ id });
-    return {
-      statusCode: 200,
-      data: result,
-    };
+  async findOne(@Param('id') id: string): Promise<Category> {
+    return await this.categoryService.findOne({ id });
   }
 
   @Post('create')
@@ -53,11 +47,7 @@ export class CategoryController {
       name: body.name.trim().toLowerCase(),
     });
 
-    const result = await this.categoryService.createCategory(data);
-    return {
-      statusCode: 201,
-      data: result,
-    };
+    return await this.categoryService.createCategory(data);
   }
 
   @Patch('update/:id')
@@ -69,25 +59,16 @@ export class CategoryController {
       name: body.name.trim().toLowerCase(),
     });
 
-    const result = await this.categoryService.updateCategory({
+    return await this.categoryService.updateCategory({
       where: { id },
       data,
     });
-    return {
-      statusCode: 200,
-      data: result,
-    };
   }
 
   @Delete('delete/:id')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(new CategoryHandler())
   async delete(@Param('id') id: string) {
-    await this.categoryService.deleteCategory({ id });
-    return {
-      statusCode: 200,
-      data: null,
-      message: 'Category deleted successfully',
-    };
+    return await this.categoryService.deleteCategory({ id });
   }
 }

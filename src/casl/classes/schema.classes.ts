@@ -20,6 +20,7 @@ export class AdminClass implements Admin {
   createdAt: Date;
   updatedAt: Date;
   avatar: string | null;
+  callbackUrl: string | null;
 }
 
 export class ProductClass implements Product {
@@ -40,8 +41,12 @@ export class ProductClass implements Product {
   updatedAt: Date;
   isPublished: boolean;
   sizes: string[];
+  size: string | null;
   status: Status;
   orderId: string | null;
+  sku: string | null;
+  color: string | null;
+  type: string | null;
 }
 
 export class BrandClass implements Brand {
