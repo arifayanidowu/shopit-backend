@@ -45,7 +45,6 @@ export class CaslAbilityFactory {
     }
 
     can(Action.Delete, AdminClass, ({ role }) => role.includes('SuperAdmin'));
-    cannot(Action.Read, AdminClass, ({ role }) => role.includes('Author'));
     cannot(Action.Delete, ProductClass, ({ isPublished }) => isPublished);
 
     return build({

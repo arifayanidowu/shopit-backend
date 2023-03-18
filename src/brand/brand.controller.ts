@@ -93,6 +93,7 @@ export class BrandController {
   ) {
     const data = new BrandEntity({
       ...body,
+      updatedAt: new Date(),
     });
     if (file) {
       data.logo = await uploadImage(file);
@@ -124,12 +125,8 @@ export class BrandController {
   @Delete(':id')
   @CheckPolicies(new CreateBrandHandler())
   async deleteBrand(@Param('id') id: string) {
-    const result = await this.brandService.deleteBrand({
+    return await this.brandService.deleteBrand({
       id,
     });
-    return {
-      statusCode: 200,
-      data: result,
-    };
   }
 }
