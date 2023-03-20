@@ -1,5 +1,8 @@
+import { Transform } from 'class-transformer';
+
 export class ProductEntity {
   id: string;
+  @Transform(({ value }: { value: string }) => value.trim()?.toLowerCase())
   name: string;
   description: string;
   price: number;
@@ -8,6 +11,7 @@ export class ProductEntity {
   createdById: string;
   image: string;
   size: string;
+  @Transform(({ value }: { value: string }) => value.trim()?.toUpperCase())
   sku: string;
   color: string;
 

@@ -25,7 +25,6 @@ model Admin {
   updatedAt     DateTime    @updatedAt
   promotions    Promotion[]
   avatar        String?
-  callbackUrl   String?
 }
 
 model Customer {
@@ -54,7 +53,7 @@ model Product {
   image        String
   quantity     Int       @default(0)
   createdById  String?   @db.ObjectId
-  createBy     Admin?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdBy    Admin?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
   brandId      String?   @db.ObjectId
   brand        Brand?    @relation(fields: [brandId], references: [id], onDelete: SetNull)
   categoryId   String?   @db.ObjectId
@@ -75,8 +74,8 @@ model Product {
 
 model Order {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  customerId  String    @db.ObjectId
-  customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId  String?   @db.ObjectId
+  customer    Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
   products    Product[]
   total       Float
   createdAt   DateTime  @default(now())
@@ -87,8 +86,8 @@ model Order {
 
 model Invoice {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  orderId   String   @db.ObjectId
-  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String?  @db.ObjectId
+  order     Order?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -122,8 +121,8 @@ model Promotion {
   endDate     DateTime @map("end_date")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  createdById String   @db.ObjectId
-  createdBy   Admin    @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById String?  @db.ObjectId
+  createdBy   Admin?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
 }
 
 enum Role {

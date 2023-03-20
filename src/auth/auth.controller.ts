@@ -20,9 +20,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Express } from 'express';
 import { AppAbility } from 'src/casl/casl-ability.factory';
-import { CheckPolicies } from 'src/casl/decorator/check-policies.decorator';
 import { Action } from 'src/casl/enum/action.enum';
-import { PoliciesGuard } from 'src/casl/guard/policies.guard';
 import { AuthService } from './auth.service';
 import { AccountDto } from './dto/account.dto';
 import { MagicLoginStrategy } from './strategy/magic-login.strategy';
@@ -30,6 +28,7 @@ import { AdminClass } from './../casl/classes/schema.classes';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Admin } from '@prisma/client';
 import { uploadImage } from 'src/utils/cloudinary.utils';
+import { Auth } from './guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -60,32 +59,27 @@ export class AuthController {
     return req.user;
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Get('all/admins')
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, AdminClass))
+  @Auth((ability: AppAbility) => ability.can(Action.Read, AdminClass))
   getAllUsers() {
     return this.authService.getAllUsers();
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Get('admin/counts')
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, AdminClass))
+  @Auth((ability: AppAbility) => ability.can(Action.Read, AdminClass))
   getAdminCounts() {
     return this.authService.getAdminsCount();
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch('update/admin')
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Update, AdminClass),
-  )
+  @Auth((ability: AppAbility) => ability.can(Action.Update, AdminClass))
   updateAdmin(@Body() body: Partial<Admin>) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...update } = body;
     return this.authService.updateAdmin(update);
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('update/admin/profile')
   @UseInterceptors(FileInterceptor('avatar'), ClassSerializerInterceptor)
   async updateProfile(
@@ -115,20 +109,14 @@ export class AuthController {
     });
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Delete('delete/admin/:id')
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Manage, AdminClass),
-  )
+  @Auth((ability: AppAbility) => ability.can(Action.Manage, AdminClass))
   deleteAdmin(@Param('id') id: string) {
     return this.authService.deleteAdmin(id);
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Delete('delete/admins')
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Delete, AdminClass),
-  )
+  @Auth((ability: AppAbility) => ability.can(Action.Delete, AdminClass))
   deleteAdmins(@Req() req: Request) {
     return this.authService.deleteManyAdmins(req.body.ids);
   }

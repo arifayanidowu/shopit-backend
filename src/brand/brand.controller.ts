@@ -19,13 +19,12 @@ import {
 import { Express } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { BrandService } from './brand.service';
-import { PoliciesGuard } from 'src/casl/guard/policies.guard';
-import { CheckPolicies } from 'src/casl/decorator/check-policies.decorator';
 import { CreateBrandHandler } from './handlers/create-brand.handler';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { BrandEntity } from './entity/brand.entity';
 import { uploadImage } from 'src/utils/cloudinary.utils';
 import { Brand } from '@prisma/client';
+import { Auth } from 'src/auth/guards/auth.guard';
 
 @Controller('brand')
 export class BrandController {
@@ -44,10 +43,9 @@ export class BrandController {
     });
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Post('create')
   @UseInterceptors(FileInterceptor('logo'), ClassSerializerInterceptor)
-  @CheckPolicies(new CreateBrandHandler())
+  @Auth(new CreateBrandHandler())
   async create(
     @UploadedFile(
       new ParseFilePipeBuilder()
@@ -73,10 +71,9 @@ export class BrandController {
     return await this.brandService.createBrand(data);
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'), ClassSerializerInterceptor)
-  @CheckPolicies(new CreateBrandHandler())
+  @Auth(new CreateBrandHandler())
   async update(
     @Param('id') id: string,
     @Body() body: BrandEntity,
@@ -121,9 +118,8 @@ export class BrandController {
     };
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Delete(':id')
-  @CheckPolicies(new CreateBrandHandler())
+  @Auth(new CreateBrandHandler())
   async deleteBrand(@Param('id') id: string) {
     return await this.brandService.deleteBrand({
       id,

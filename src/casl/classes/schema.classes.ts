@@ -20,7 +20,6 @@ export class AdminClass implements Admin {
   createdAt: Date;
   updatedAt: Date;
   avatar: string | null;
-  callbackUrl: string | null;
 }
 
 export class ProductClass implements Product {
