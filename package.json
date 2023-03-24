@@ -5,6 +5,10 @@
   "author": "Idowu Arifayan",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "16.14.0",
+    "npm": "9.1.1"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
