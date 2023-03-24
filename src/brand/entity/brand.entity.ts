@@ -1,17 +1,20 @@
 import { Brand } from '@prisma/client';
 import { Transform } from 'class-transformer';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class BrandEntity implements Brand {
-  id: string;
+  id: Brand['id'];
 
+  @IsString()
+  @IsNotEmpty()
   @Transform(({ value }: { value: string }) => value.trim()?.toLowerCase())
-  name: string;
+  name: Brand['name'];
 
-  logo: string;
+  logo: Brand['logo'];
 
-  createdAt: Date;
+  createdAt: Brand['createdAt'];
 
-  updatedAt: Date = new Date();
+  updatedAt: Brand['updatedAt'];
 
   constructor(partial: Partial<BrandEntity>) {
     Object.assign(this, partial);

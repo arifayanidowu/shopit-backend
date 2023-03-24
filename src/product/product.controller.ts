@@ -59,11 +59,11 @@ export class ProductController {
   ) {
     const data = new ProductEntity({
       ...body,
-      createdById: req.user.id,
       image: await uploadImage(file),
       price: Number(body.price),
       quantity: Number(body.quantity),
       sku: generateSku(body),
+      createdById: req.user.id,
     });
 
     return await this.productService.createProduct(data);

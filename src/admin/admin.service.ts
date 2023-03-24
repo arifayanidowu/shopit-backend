@@ -7,10 +7,12 @@ export class AdminService {
 
   async findOne(
     adminWhereUniqueInput: Prisma.AdminWhereUniqueInput,
+    include?: Prisma.AdminInclude,
   ): Promise<Admin | null> {
     try {
       return await this.prisma.admin.findUnique({
         where: adminWhereUniqueInput,
+        include,
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -31,13 +33,15 @@ export class AdminService {
     cursor?: Prisma.AdminWhereUniqueInput;
     where?: Prisma.AdminWhereInput;
     orderBy?: Prisma.AdminOrderByWithRelationInput;
+    include?: Prisma.AdminInclude;
   }): Promise<Admin[]> {
-    const { skip, take, cursor, where, orderBy } = params;
+    const { skip, take, cursor, where, include, orderBy } = params;
     return this.prisma.admin.findMany({
       skip,
       take,
       cursor,
       where,
+      include,
       orderBy,
     });
   }

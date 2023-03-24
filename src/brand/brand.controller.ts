@@ -106,16 +106,10 @@ export class BrandController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async getBrand(
-    @Param('id') id: string,
-  ): Promise<{ statusCode: number; data: Brand }> {
-    const result = await this.brandService.findOne({
+  async getBrand(@Param('id') id: string): Promise<Brand> {
+    return await this.brandService.findOne({
       id,
     });
-    return {
-      statusCode: 200,
-      data: result,
-    };
   }
 
   @Delete(':id')

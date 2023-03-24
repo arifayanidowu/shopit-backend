@@ -39,7 +39,6 @@ export class CategoryController {
     const data = new CategoryEntity({
       ...body,
     });
-
     return await this.categoryService.createCategory(data);
   }
 
