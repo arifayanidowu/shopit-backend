@@ -47,6 +47,7 @@ export class CategoryController {
   async update(@Param('id') id: string, @Body() body: CategoryEntity) {
     const data = new CategoryEntity({
       ...body,
+      updatedAt: new Date(),
     });
 
     return await this.categoryService.updateCategory({
