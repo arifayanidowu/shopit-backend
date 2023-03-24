@@ -1,6 +1,6 @@
 import { Category } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CategoryEntity implements Category {
   id: Category['id'];
@@ -10,11 +10,9 @@ export class CategoryEntity implements Category {
   @Transform((params) => params.value.trim()?.toLowerCase())
   name: Category['name'];
 
-  @IsDate()
   createdAt: Category['createdAt'];
 
-  @IsDate()
-  updatedAt: Category['updatedAt'] = new Date();
+  updatedAt: Category['updatedAt'];
 
   constructor(partial: Partial<CategoryEntity>) {
     Object.assign(this, partial);
