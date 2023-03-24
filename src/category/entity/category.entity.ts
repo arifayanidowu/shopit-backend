@@ -11,7 +11,7 @@ export class CategoryEntity implements Category {
   name: Category['name'];
 
   @IsDate()
-  createdAt: Category['createdAt'] = new Date();
+  createdAt: Category['createdAt'];
 
   @IsDate()
   updatedAt: Category['updatedAt'] = new Date();
