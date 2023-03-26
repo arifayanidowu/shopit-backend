@@ -77,7 +77,7 @@ export class ProductController {
   @Auth(new ProductHandler())
   async update(
     @Param('id') id: string,
-    @Body() body: ProductEntity,
+    @Body() body?: ProductEntity,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
