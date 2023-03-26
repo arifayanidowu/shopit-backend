@@ -58,24 +58,11 @@ export class ProductService {
     data: Prisma.ProductUpdateInput;
   }): Promise<Product> {
     const { where, data } = params;
-    try {
-      return await this.prisma.product.update({
-        where,
-        data,
-      });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new HttpException(
-            `This is a unique constraint violation, Product with (${error.meta.target}) already exists`,
-            422,
-          );
-        } else if (error.code === 'P2025') {
-          throw new HttpException('Record to update does not exist.', 422);
-        }
-      }
-      throw error;
-    }
+
+    return await this.prisma.product.update({
+      where,
+      data,
+    });
   }
 
   async upsertProduct(params: {

@@ -43,12 +43,6 @@ export class ProductController {
     });
   }
 
-  @Get(':id')
-  @Auth(new ProductHandler())
-  async findOne(@Param('id') id: string): Promise<Product> {
-    return await this.productService.findOne({ id });
-  }
-
   @Post('create')
   @UseInterceptors(FileInterceptor('file'), ClassSerializerInterceptor)
   @Auth(new ProductHandler())
@@ -97,8 +91,9 @@ export class ProductController {
   ) {
     const data = new ProductEntity({
       ...body,
-      price: Number(body.price),
-      quantity: Number(body.quantity),
+      price: body.price && Number(body.price),
+      quantity: body.quantity && Number(body.quantity),
+      updatedAt: new Date(),
     });
     if (file) {
       data.image = await uploadImage(file);
@@ -107,6 +102,12 @@ export class ProductController {
       where: { id },
       data,
     });
+  }
+
+  @Get(':id')
+  @Auth(new ProductHandler())
+  async findOne(@Param('id') id: string): Promise<Product> {
+    return await this.productService.findOne({ id });
   }
 
   @Delete(':id')
