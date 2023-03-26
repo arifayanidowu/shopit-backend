@@ -32,7 +32,15 @@ export class ProductController {
   @Get()
   @Auth(new GetProductsHandler())
   async findAll(): Promise<Product[]> {
-    return await this.productService.findAll({});
+    return await this.productService.findAll({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        category: true,
+        brand: true,
+      },
+    });
   }
 
   @Get(':id')
