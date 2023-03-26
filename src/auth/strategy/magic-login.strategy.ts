@@ -22,7 +22,7 @@ export class MagicLoginStrategy extends PassportStrategy(Strategy) {
         expiresIn: '1h',
       },
       callbackUrl:
-        configService.get<string>('BASE_URL') + '/auth/login/callback',
+        configService.get<string>('FRONTEND_URL') + '/auth/login/callback',
       sendMagicLink: async (destination, href) => {
         const msg = {
           to: destination,
