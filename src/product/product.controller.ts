@@ -23,13 +23,14 @@ import { generateSku } from 'src/utils/sku';
 import { uploadImage } from 'src/utils/cloudinary.utils';
 import { ProductEntity } from './entity/product.entity';
 import { Auth } from 'src/auth/guards/auth.guard';
+import { GetProductsHandler } from './handler/get-products.handler';
 
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
-  @Auth(new ProductHandler())
+  @Auth(new GetProductsHandler())
   async findAll(): Promise<Product[]> {
     return await this.productService.findAll({});
   }
