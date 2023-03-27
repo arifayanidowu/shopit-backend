@@ -95,6 +95,7 @@ export class AuthController {
         })
         .build({
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          fileIsRequired: false,
         }),
     )
     file?: Express.Multer.File,
