@@ -1,3 +1,4 @@
+import { serializeObj } from './../utils/serializeObj';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   Controller,
@@ -98,9 +99,11 @@ export class ProductController {
     if (file) {
       data.image = await uploadImage(file);
     }
+    const newObj = serializeObj(data);
+    delete newObj.id;
     return await this.productService.updateProduct({
       where: { id },
-      data,
+      data: newObj,
     });
   }
 
