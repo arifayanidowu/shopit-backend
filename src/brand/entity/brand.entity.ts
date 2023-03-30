@@ -1,8 +1,9 @@
 import { Brand } from '@prisma/client';
-import { Transform } from 'class-transformer';
+import { Exclude, Transform } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class BrandEntity implements Brand {
+  @Exclude()
   id: Brand['id'];
 
   @IsString()

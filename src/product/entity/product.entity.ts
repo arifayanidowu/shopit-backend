@@ -1,10 +1,16 @@
 import { Gender, Product, Status } from '@prisma/client';
+import { Exclude } from 'class-transformer';
 
 export class ProductEntity implements Product {
+  @Exclude()
   id: string;
+
   name: string;
+
   description: string;
+
   price: number;
+
   newPrice: number | null;
   isDiscounted: boolean;
   discount: number | null;

@@ -100,7 +100,6 @@ export class ProductController {
       data.image = await uploadImage(file);
     }
     const newObj = serializeObj(data);
-    delete newObj.id;
     return await this.productService.updateProduct({
       where: { id },
       data: newObj,
