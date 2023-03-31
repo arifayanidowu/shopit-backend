@@ -39,7 +39,6 @@ export class ProductClass implements Product {
   createdAt: Date;
   updatedAt: Date;
   isPublished: boolean;
-  sizes: string[];
   size: string | null;
   status: Status;
   orderId: string | null;

@@ -23,7 +23,6 @@ export class ProductEntity implements Product {
   createdAt: Date;
   updatedAt: Date;
   isPublished: boolean;
-  sizes: string[];
   size: string | null;
   status: Status | null;
   orderId: string | null;

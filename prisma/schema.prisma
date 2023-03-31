@@ -62,7 +62,6 @@ model Product {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   isPublished  Boolean   @default(false)
-  sizes        String[]  @default(["S", "M", "L", "XL", "XXL"])
   size         String?
   status       Status    @default(draft)
   order        Order?    @relation(fields: [orderId], references: [id])
