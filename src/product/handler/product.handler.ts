@@ -11,6 +11,6 @@ export class ProductHandler implements IPolicyHandler {
 
 export class ProductDeleteHandler implements IPolicyHandler {
   handle(ability: AppAbility) {
-    return ability.can(Action.Delete, ProductClass);
+    return ability.cannot(Action.Delete, ProductClass);
   }
 }

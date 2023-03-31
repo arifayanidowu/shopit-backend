@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AppAbility, CaslAbilityFactory } from '../casl-ability.factory';
 import { CHECK_POLICIES_KEY } from '../decorator/check-policies.decorator';
@@ -30,6 +35,10 @@ export class PoliciesGuard implements CanActivate {
     if (typeof handler === 'function') {
       return handler(ability);
     }
+    if (handler.handle(ability) === false)
+      throw new UnauthorizedException(
+        'Forbidden Resource: You are not authorized to perform this action',
+      );
     return handler.handle(ability);
   }
 }

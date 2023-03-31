@@ -32,7 +32,7 @@ const lambdaMatcher = (matchConditions: MatchConditions) => matchConditions;
 @Injectable()
 export class CaslAbilityFactory {
   createForUser(user: Admin) {
-    const { can, build } = new AbilityBuilder<AppAbility>(
+    const { can, cannot, build } = new AbilityBuilder<AppAbility>(
       PureAbility as AbilityClass<AppAbility>,
     );
     if (
@@ -40,7 +40,7 @@ export class CaslAbilityFactory {
       (user.role === 'SuperAdmin' || user.role === 'Editor')
     ) {
       can(Action.Manage, 'all'); // read-write access to everything
-      can(Action.Delete, ProductClass, ({ status }) => status === 'draft');
+      cannot(Action.Delete, ProductClass, ({ status }) => status !== 'draft');
     } else {
       can(Action.Read, 'all'); // read-only access to everything
     }
