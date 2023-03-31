@@ -45,7 +45,7 @@ export class CaslAbilityFactory {
     }
 
     can(Action.Delete, AdminClass, ({ role }) => role.includes('SuperAdmin'));
-    cannot(Action.Delete, ProductClass, ({ isPublished }) => isPublished);
+    cannot(Action.Delete, ProductClass, ({ status }) => status === 'published');
 
     return build({
       // Read https://casl.js.org/v5/en/guide/subject-type-detection#use-classes-as-subject-types for details

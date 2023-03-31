@@ -38,7 +38,6 @@ export class ProductClass implements Product {
   gender: Gender | null;
   createdAt: Date;
   updatedAt: Date;
-  isPublished: boolean;
   size: string | null;
   status: Status;
   orderId: string | null;

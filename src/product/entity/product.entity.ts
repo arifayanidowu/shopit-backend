@@ -22,7 +22,6 @@ export class ProductEntity implements Product {
   gender: Gender | null;
   createdAt: Date;
   updatedAt: Date;
-  isPublished: boolean;
   size: string | null;
   status: Status | null;
   orderId: string | null;
