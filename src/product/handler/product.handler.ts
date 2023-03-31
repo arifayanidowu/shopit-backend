@@ -8,3 +8,9 @@ export class ProductHandler implements IPolicyHandler {
     return ability.can(Action.Manage, ProductClass);
   }
 }
+
+export class ProductDeleteHandler implements IPolicyHandler {
+  handle(ability: AppAbility) {
+    return ability.can(Action.Delete, ProductClass);
+  }
+}

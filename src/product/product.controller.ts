@@ -18,7 +18,10 @@ import {
 } from '@nestjs/common';
 import { Express } from 'express';
 import { ProductService } from './product.service';
-import { ProductHandler } from './handler/product.handler';
+import {
+  ProductDeleteHandler,
+  ProductHandler,
+} from './handler/product.handler';
 import { Product } from '@prisma/client';
 import { generateSku } from 'src/utils/sku';
 import { uploadImage } from 'src/utils/cloudinary.utils';
@@ -113,7 +116,7 @@ export class ProductController {
   }
 
   @Delete(':id')
-  @Auth(new ProductHandler())
+  @Auth(new ProductDeleteHandler())
   async delete(@Param('id') id: string) {
     return await this.productService.deleteProduct({ id });
   }
