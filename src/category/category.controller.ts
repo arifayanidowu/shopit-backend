@@ -19,7 +19,7 @@ export class CategoryController {
 
   @Get()
   @Auth(new CategoryHandler())
-  async findAll(): Promise<Category[]> {
+  async findAll() {
     return this.categoryService.findAll({
       orderBy: {
         createdAt: 'desc',

@@ -9,21 +9,19 @@ import {
 } from '@casl/ability';
 import { Action } from '../casl/enum/action.enum';
 import { Admin, Promotion } from '@prisma/client';
-import {
-  AdminClass,
-  ProductClass,
-  BrandClass,
-  CategoryClass,
-} from './classes/schema.classes';
+import { AdminClass } from './classes/schema.classes';
+import { ProductEntity as Product } from 'src/product/entity/product.entity';
+import { CategoryEntity as Category } from 'src/category/entity/category.entity';
+import { BrandEntity as Brand } from 'src/brand/entity/brand.entity';
 
 type Subjects =
   | InferSubjects<
       | Admin
       | Promotion
-      | typeof ProductClass
-      | typeof BrandClass
+      | typeof Product
+      | typeof Brand
       | typeof AdminClass
-      | typeof CategoryClass
+      | typeof Category
     >
   | 'all';
 export type AppAbility = PureAbility<[Action, Subjects], MatchConditions>;
@@ -40,13 +38,14 @@ export class CaslAbilityFactory {
       (user.role === 'SuperAdmin' || user.role === 'Editor')
     ) {
       can(Action.Manage, 'all'); // read-write access to everything
-      cannot(Action.Delete, ProductClass, ({ status }) => status !== 'draft');
+      can(Action.Delete, Product, ({ status }) => ['draft'].includes(status));
     } else {
       can(Action.Read, 'all'); // read-only access to everything
     }
-
     can(Action.Delete, AdminClass, ({ role }) => role.includes('SuperAdmin'));
-
+    cannot(Action.Delete, Product, ({ status }) =>
+      ['published', 'archived'].includes(status),
+    );
     return build({
       // Read https://casl.js.org/v5/en/guide/subject-type-detection#use-classes-as-subject-types for details
       detectSubjectType: (item) =>

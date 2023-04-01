@@ -19,7 +19,7 @@ import {
 import { Express } from 'express';
 import { ProductService } from './product.service';
 import {
-  ProductDeleteHandler,
+  ProductCannotDeleteHandler,
   ProductHandler,
 } from './handler/product.handler';
 import { Product } from '@prisma/client';
@@ -116,15 +116,8 @@ export class ProductController {
   }
 
   @Delete(':id')
-  @Auth(new ProductDeleteHandler())
+  @Auth(new ProductCannotDeleteHandler())
   async delete(@Param('id') id: string) {
     return await this.productService.deleteProduct({ id });
-  }
-
-  @Get('batch/:id')
-  async getBatchProducts(@Param('id') batchId: string) {
-    return await this.productService.batchProducts({
-      where: { id: batchId },
-    });
   }
 }

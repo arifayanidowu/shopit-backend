@@ -1,16 +1,15 @@
-import { ProductClass } from './../../casl/classes/schema.classes';
 import { AppAbility } from 'src/casl/casl-ability.factory';
 import { IPolicyHandler } from './../../casl/handler/policy.handler';
 import { Action } from 'src/casl/enum/action.enum';
-
+import { ProductEntity as Product } from '../entity/product.entity';
 export class ProductHandler implements IPolicyHandler {
   handle(ability: AppAbility) {
-    return ability.can(Action.Manage, ProductClass);
+    return ability.can(Action.Manage, Product);
   }
 }
 
-export class ProductDeleteHandler implements IPolicyHandler {
+export class ProductCannotDeleteHandler implements IPolicyHandler {
   handle(ability: AppAbility) {
-    return ability.cannot(Action.Delete, ProductClass);
+    return ability.can(Action.Delete, Product, 'draft');
   }
 }
